@@ -6,7 +6,12 @@ from PIL import Image
 from matplotlib import patches
 from io import BytesIO
 
-subscription_key = 'c726aaee12854a068e2ccf91ebbbe3b8'  # 换成自己申请到的key
+import configparser
+
+# prepare keys, images and URLs
+conf = configparser.ConfigParser()
+conf.read("config.ini", encoding="utf-8")
+subscription_key = conf['APIs']['faceAPI']
 assert subscription_key
 face_api_url = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect'
 image_url = 'https://how-old.net/Images/faces2/main007.jpg'
