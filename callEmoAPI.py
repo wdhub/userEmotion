@@ -13,7 +13,7 @@ conf = configparser.ConfigParser()
 conf.read("config.ini", encoding="utf-8")
 subscription_key = conf['APIs']['faceAPI']
 assert subscription_key
-face_api_url = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect'
+face_api_url = 'https://westeurope.api.cognitive.microsoft.com/face/v1.0/detect'
 image_url = 'https://how-old.net/Images/faces2/main007.jpg'
 
 headers = {'Ocp-Apim-Subscription-Key': subscription_key}
