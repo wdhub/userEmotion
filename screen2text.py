@@ -4,7 +4,14 @@
 
 # import easyocr
 # import keras_ocr # too slow as well
+import utility
 import pytesseract
+import time
+from PIL import ImageGrab
+import keyboard
+import pickle
+
+
 # import cv2
 
 # test: read the text from one prepared image
@@ -19,6 +26,34 @@ import pytesseract
 # )
 # half = cv2.resize(image, (0, 0), fx = 0.5, fy = 0.5)
 # result = reader.readtext(image,detail=0,batch_size=2)# get rid of the meaningless numbers
-#print(result)
+# print(result)
 
-result2=pytesseract.image_to_string('t1.png')
+def predictEmo(OCRresult):
+    # extract feature
+    toPredict = utility.cleanText(OCRresult)
+    X = dictWords.transform([toPredict]).toarray()  # extract features from dictionary
+    y_predicted = clf.predict(X)[0]
+    emo_predicted = [k for k, v in utility.getEmoCode().items() if v == y_predicted][0]  # convert back to emotion
+    return y_predicted, emo_predicted
+
+
+# recover trained model and dictionary as global variables
+# recover trained model
+with open('NB_trained.pkl', 'rb') as load_data:
+    clf = pickle.load(load_data)
+# dictionary
+with open('dict.pkl', 'rb') as load_data:
+    dictWords = pickle.load(load_data)
+
+# screenshot every 5 seconds
+emoList = []  # a record of emotions in digits
+while True:
+    image = ImageGrab.grab()  # screenshot
+    result = pytesseract.image_to_string(image)  # OCR, 't1.png'
+    # print("OCR: "+result)
+    if keyboard.is_pressed('enter'):
+        break
+    else:
+        y_predicted, emo_predicted = predictEmo(result)
+        emoList.append(y_predicted)
+        print("emotion: " + emo_predicted)
