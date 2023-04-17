@@ -45,3 +45,4 @@ def freExtract(com_train,com_test):
     X_test = model.transform(com_test).toarray()
 
     return X_train,X_test,model
+
