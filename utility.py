@@ -4,6 +4,8 @@
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
+import serial.tools.list_ports
+import time
 
 def getEmoCode(choice):
     if choice=='KDEF':
@@ -46,3 +48,14 @@ def freExtract(com_train,com_test):
 
     return X_train,X_test,model
 
+# communicate with arduino and trigger vibration
+# flag: "1"-vibrate; "0"->stop
+def comArduino(flag,plist):
+    if len(plist) <= 0:
+        print('no port detected!')
+    else:
+        plist_0 = list(plist[0])
+        serialName = plist_0[0]
+        serialFd = serial.Serial(serialName, 9600, timeout=60)
+        serialFd.write(flag.encode('utf-8'))
+        print(flag+" sent to port: ", serialFd.name)

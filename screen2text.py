@@ -2,16 +2,15 @@
 # real time
 # easyOCR is faster than keras,
 
-# import easyocr
-# import keras_ocr # too slow as well
 import utility
+import emoManager
 from ferClf import predictEmo as preFaceEmo
 import pytesseract
-import time
 from PIL import ImageGrab
 import numpy as np
 import keyboard
 import pickle
+import serial.tools.list_ports
 
 
 # import cv2
@@ -62,6 +61,15 @@ with open('SVM_trained.pkl', 'rb') as load_clf:
 with open('dict.pkl', 'rb') as load_data:
     dictWords = pickle.load(load_data)
 
+#serial communication
+plist = list(serial.tools.list_ports.comports())
+if len(plist) <= 0:
+    print('no port detected!')
+else:
+    plist_0 = list(plist[0])
+    serialName = plist_0[0]
+    serialFd = serial.Serial(serialName, 9600, timeout=60)
+
 # screenshot every 2-4 seconds
 emoList_text = []  # a record of emotions in digits from text
 emoList_face=[]
@@ -70,6 +78,7 @@ while True:
     image = ImageGrab.grab()  # screenshot
     result = pytesseract.image_to_string(image)  # OCR, 't1.png'
     # print("OCR: "+result)
+    # to be developped: if emotions are imbalance, break
     if keyboard.is_pressed('enter'):
         break
     else:
@@ -78,11 +87,19 @@ while True:
         emoList_text.append(y_text)
         print("text emotion: " + emo_text)
 
+        # utility.comArduino("0",plist)  # flag: "1"-vibrate; "0"->stop vibration
+        serialFd.write("0".encode('utf-8'))
+
         #facial expression
         y_face, emo_face = predictFaceEmo(np.array(image),clf_face)
         if y_face!=None:
             emoList_text.append(y_face)
             print("facial expression: " + emo_face)
 
+        # three continious negative same emotion
+        flag1=emoManager.decideNeg(emoList_face,emoList_text)
+        if flag1:
+                serialFd.write("1".encode('utf-8'))
+                print("continous negative emotion!")
 
-
+# display emotion UI
