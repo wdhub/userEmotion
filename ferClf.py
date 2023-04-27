@@ -140,7 +140,7 @@ def predictEmo(img,clf):
         HOG = calHOG(img1)
 
         x = np.hstack((landmark, HOG)).reshape(1, -1)
-        y_predicted=clf.predict(x)
+        y_predicted=clf.predict(x)[0]
     else:
         y_predicted=None
 
