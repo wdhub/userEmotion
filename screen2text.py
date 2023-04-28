@@ -61,7 +61,7 @@ emoList_text = []  # a record of emotions in digits from text
 emoList_face = []
 num_iter = 0  # how many times the loop has run
 
-while num_iter < 40:  # show the result when the program has been running for too long
+while num_iter < 30:  # show the result when the program has been running for too long
     image = ImageGrab.grab()  # screenshot
     result = pytesseract.image_to_string(image)  # OCR, 't1.png'
     # print("OCR: "+result)
@@ -91,6 +91,7 @@ while num_iter < 40:  # show the result when the program has been running for to
 
         # decide imbalance and break the loop
         if emoManager.decideBalance(emoList_face, emoList_text):
+            print("imbalance！!")
             break
 
     num_iter += 1

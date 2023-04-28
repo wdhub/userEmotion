@@ -8,10 +8,16 @@ import serial.tools.list_ports
 import time
 
 def getEmoCode(choice):
+    emoCode = {'joy': 0, 'sadness': 1, 'anger': 2, 'fear': 3, 'disgust': 4, 'surprise': 5}
     if choice=='KDEF':
         emoCode={'HA':0, 'SA':1, 'AN':2, 'AF':3, 'DI':4, 'SU':5} # convert the encoded file name to digit label
-    else:
-        emoCode={'joy':0, 'sadness':1, 'anger':2, 'fear':3, 'disgust':4, 'surprise':5}
+    if choice=='emoji':
+        emoCode = {'☺': 0, '😢': 1, '😠': 2, '😨': 3, '🤮': 4, '😲': 5}
+    if choice=='color':
+        emoCode={'joy':'gold', 'sadness':'teal', 'anger':'orangered', 'fear':'indigo',
+               'disgust':'olivedrab', 'surprise':'crimson'}
+        # emoCode={'☺':'gold', '😢':'teal', '😠':'orangered', '😨':'indigo',
+        #        '🤮':'olivedrab', '😲':'crimson'}
     return emoCode
     # convert text label to digit
 

@@ -31,7 +31,7 @@ def checkOneList_b(labels):
         # the post has been browsed for a while
         # the most common emotion take up more than half of all emotions
         # fulfill the 2 conditions at the same time->imbalance
-        flag= (total>=10) & (mostCom[0][1]/total>=0.50)
+        flag= (total>=20) & (mostCom[0][1]/total>=0.50)
 
     return flag
 
@@ -60,8 +60,7 @@ def convertLabel(labels):
     newValues= [x/num_label for x in oldValues]
 
     # set colors in the pie chart consistent
-    colorDict={'joy':'gold', 'sadness':'teal', 'anger':'orangered', 'fear':'indigo',
-               'disgust':'olivedrab', 'surprise':'crimson'}
+    colorDict=utility.getEmoCode('color')
     colorList=counted.keys()
     colorList=[colorDict[x] for x in colorList]
 
@@ -72,7 +71,6 @@ def convertLabel(labels):
 # pie chart
 def displayEmo(list_text, list_face):
     fig, axes = plt.subplots(1, 2)
-
     # text analysis display
     if(len(list_text)>0):
         values,labels,colorList=convertLabel(list_text)
