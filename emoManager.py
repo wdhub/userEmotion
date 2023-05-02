@@ -4,6 +4,7 @@
 from collections import Counter
 import matplotlib.pyplot as plt
 import utility
+from playsound import playsound
 
 # N continious negative same emotion in one list
 def checkOneList_neg(labels):
@@ -84,3 +85,8 @@ def displayEmo(list_text, list_face):
         axes[1].set_title('emotions analysed via images')
 
     fig.show()
+
+# play the meditation according to the most common emotion
+# to be finished
+def playMeditation():
+    playsound('audio/disgust.mp3')
