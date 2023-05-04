@@ -18,6 +18,9 @@ def getEmoCode(choice):
                'disgust':'olivedrab', 'surprise':'crimson'}
         # emoCode={'☺':'gold', '😢':'teal', '😠':'orangered', '😨':'indigo',
         #        '🤮':'olivedrab', '😲':'crimson'}
+    if choice=='sound':
+        emoCode={0:'fear_joy_surprise.mp3', 1:'sad.mp3', 2:'anger.mp3', 3:'fear_joy_surprise.mp3',
+               4:'disgust.mp3', 5:'fear_joy_surprise.mp3'}
     return emoCode
     # convert text label to digit
 

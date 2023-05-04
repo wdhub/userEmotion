@@ -5,6 +5,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import utility
 from playsound import playsound
+from matplotlib.widgets import Button
 
 # N continious negative same emotion in one list
 def checkOneList_neg(labels):
@@ -23,7 +24,7 @@ def decideNeg(list1,list2):
     return flag
 
 # decide if the emotions imbalance
-def checkOneList_b(labels):
+def checkOneList_b(labels,totalRun):
     flag = False  # not imbalanced
 
     if len(labels) != 0:  # if the list content elements
@@ -32,14 +33,14 @@ def checkOneList_b(labels):
         # the post has been browsed for a while
         # the most common emotion take up more than half of all emotions
         # fulfill the 2 conditions at the same time->imbalance
-        flag= (total>=20) & (mostCom[0][1]/total>=0.50)
+        flag= (total>=totalRun) & (mostCom[0][1]/total>=0.50)
 
     return flag
 
 
 # check 2 lists and decide to display
-def decideBalance(list1,list2):
-    flag= checkOneList_b(list1) | checkOneList_b(list2) # if any of them contain continious negative same emotion
+def decideBalance(list1,list2,totalRun):
+    flag= checkOneList_b(list1,totalRun) | checkOneList_b(list2,totalRun) # if any of them contain continious negative same emotion
     return flag
 
 # convert label list to pie chart input data
@@ -84,9 +85,26 @@ def displayEmo(list_text, list_face):
         axes[1].pie(values,labels=labels,colors=colorList)
         axes[1].set_title('emotions analysed via images')
 
+    buttonPos = fig.add_axes([0.94, 0.03, 0.03, 0.03])
+    button= Button(buttonPos, 'play', color='khaki', hovercolor='yellow')
+    callback=myButtonCbk()
+    callback.list_face=list_face
+    callback.list_text = list_text
+    button.on_clicked(callback.playMeditation)
     fig.show()
 
-# play the meditation according to the most common emotion
-# to be finished
-def playMeditation():
-    playsound('audio/disgust.mp3')
+class myButtonCbk():
+    print('button clicked!')
+    list_text=[]
+    list_face=[]
+    # play the meditation according to the most common emotion
+    # combine the lists from text and face
+    def playMeditation(self,event):
+            # count most common emotion
+            allList=self.list_face+self.list_text
+            mostCommon = Counter(allList).most_common(1)[0][0]
+            fileName='audio/'+utility.getEmoCode('sound')[mostCommon]
+            print('playing: '+fileName)
+            # play the sound
+            playsound(fileName)
+

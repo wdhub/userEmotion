@@ -60,6 +60,7 @@ else:
 emoList_text = []  # a record of emotions in digits from text
 emoList_face = []
 num_iter = 0  # how many times the loop has run
+totalRun=10 # until how many times of analysis, can we start to decide the balance
 
 while num_iter < 30:  # show the result when the program has been running for too long
     image = ImageGrab.grab()  # screenshot
@@ -90,11 +91,11 @@ while num_iter < 30:  # show the result when the program has been running for to
             print("continuous negative emotion!")
 
         # decide imbalance and break the loop
-        if emoManager.decideBalance(emoList_face, emoList_text):
+        if emoManager.decideBalance(emoList_face, emoList_text,totalRun):
             print("imbalance！!")
             break
 
     num_iter += 1
 
-# display emotion UI
+# display emotion UI and play the sound
 emoManager.displayEmo(emoList_text, emoList_face)
