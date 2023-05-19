@@ -85,16 +85,20 @@ def displayEmo(list_text, list_face):
         axes[1].pie(values,labels=labels,colors=colorList)
         axes[1].set_title('emotions analysed via images')
 
-    buttonPos = fig.add_axes([0.94, 0.03, 0.03, 0.03])
+    #button to play the meditation
+    buttonPos = fig.add_axes([0.94, 0.03, 0.06, 0.03])
     button= Button(buttonPos, 'play', color='khaki', hovercolor='yellow')
     callback=myButtonCbk()
+    # pass parameters
     callback.list_face=list_face
     callback.list_text = list_text
-    button.on_clicked(callback.playMeditation)
-    fig.show()
+
+    return button,callback, fig
+    # # listen and callback
+    # button.on_clicked(callback.playMeditation)
+    # fig.show()
 
 class myButtonCbk():
-    print('button clicked!')
     list_text=[]
     list_face=[]
     # play the meditation according to the most common emotion

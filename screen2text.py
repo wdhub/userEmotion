@@ -1,6 +1,7 @@
-# screenshot the current screen and extract the text
-# real time
-# easyOCR is faster than keras,
+# main python file
+# extract image and text, predict emotions, and inform
+# demo link:
+
 
 import utility
 import emoManager
@@ -11,7 +12,8 @@ import numpy as np
 import keyboard
 import pickle
 import serial.tools.list_ports
-
+import time
+from winsound import Beep
 
 # detect emotion from text
 def predictTextEmo(OCRresult, clf):
@@ -59,8 +61,16 @@ else:
 # screenshot every 2-4 seconds
 emoList_text = []  # a record of emotions in digits from text
 emoList_face = []
-num_iter = 0  # how many times the loop has run
-totalRun=10 # until how many times of analysis, can we start to decide the balance
+num_iter = 0  # how many times the loop has
+totalRun = 5  # until how many times of analysis, demo: 5; test: 20
+
+#indicate program running: two vibrates
+serialFd.write("1".encode('utf-8'))
+time.sleep(1)
+serialFd.write("0".encode('utf-8'))
+time.sleep(1)
+serialFd.write("1".encode('utf-8'))
+time.sleep(1)
 
 while num_iter < 30:  # show the result when the program has been running for too long
     image = ImageGrab.grab()  # screenshot
@@ -88,14 +98,17 @@ while num_iter < 30:  # show the result when the program has been running for to
         flag1 = emoManager.decideNeg(emoList_face, emoList_text)
         if flag1:
             serialFd.write("1".encode('utf-8'))
+            Beep(800,1000)
             print("continuous negative emotion!")
 
         # decide imbalance and break the loop
-        if emoManager.decideBalance(emoList_face, emoList_text,totalRun):
+        if emoManager.decideBalance(emoList_face, emoList_text, totalRun):
             print("imbalance！!")
             break
 
     num_iter += 1
 
 # display emotion UI and play the sound
-emoManager.displayEmo(emoList_text, emoList_face)
+button, callback, fig = emoManager.displayEmo(emoList_text, emoList_face)
+# the button has to be outside the function scope to be able to listen to click somehow...
+button.on_clicked(callback.playMeditation)

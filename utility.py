@@ -16,6 +16,9 @@ def getEmoCode(choice):
     if choice=='color':
         emoCode={'joy':'gold', 'sadness':'teal', 'anger':'orangered', 'fear':'indigo',
                'disgust':'olivedrab', 'surprise':'crimson'}
+    if choice == 'color_F':
+        emoCode = {'Happy': 'gold', 'Sad': 'teal', 'Angry': 'orangered', 'Scared': 'indigo',
+                       'Disgusted': 'olivedrab', 'Surprised': 'crimson'}
         # emoCode={'☺':'gold', '😢':'teal', '😠':'orangered', '😨':'indigo',
         #        '🤮':'olivedrab', '😲':'crimson'}
     if choice=='sound':
