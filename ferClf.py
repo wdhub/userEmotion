@@ -18,7 +18,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
-
+import matplotlib.pyplot as plt
 
 
 # find landmark feature in the given image
@@ -106,6 +106,16 @@ def extractTraining():
                 pickle.dump(fea_lm, file, True)
             print("feature saved: " + subPath)
 
+def trainSVM(fea, labels,C):
+    X_train, X_test, y_train, y_test = train_test_split(fea, labels, test_size=0.25)
+    clf = SVC(kernel='linear', C=C, gamma='auto')
+    clf.fit(X_train, y_train)
+    # evaluate
+    y_test_predicted = clf.predict(X_test)
+    score = accuracy_score(y_test, y_test_predicted)
+    confusion = confusion_matrix(y_test, y_test_predicted, normalize='true')
+    return score, confusion
+
 def trainClf(fea_lm,fea_HOG,labels):
     # combine features
     fea_lm_HOG = []
@@ -116,14 +126,8 @@ def trainClf(fea_lm,fea_HOG,labels):
     # fea_lm_HOG = scaler.fit_transform(fea_lm_HOG)
 
     # train SVM
-    fea = fea_lm_HOG
-    X_train, X_test, y_train, y_test = train_test_split(fea, labels, test_size=0.25)
-    clf = SVC(kernel='linear', C=0.1, gamma='auto')
-    clf.fit(X_train, y_train)
-    # evaluate
-    y_test_predicted = clf.predict(X_test)
-    score = accuracy_score(y_test, y_test_predicted)
-    confusion = confusion_matrix(y_test, y_test_predicted, normalize='true')
+    score, confusion=trainSVM(fea_lm_HOG, labels,C=0.1)
+
 
 # # predict
 # img = cv2.imread('t3.png')
@@ -155,3 +159,46 @@ def predictEmo(img,clf):
 #     clf = pickle.load(load_clf)
 
 
+# validate accuracy and confusion matrix
+def validateClf():
+    #recover data and labels
+    with open('fea_HOG.pkl', 'rb') as load_fea_HOG:
+        fea_HOG = pickle.load(load_fea_HOG)
+
+    with open('fea_LM.pkl', 'rb') as load_fea_lm:
+        fea_lm = pickle.load(load_fea_lm)
+
+    with open('labels.pkl', 'rb') as load_labels:
+        labels = pickle.load(load_labels)
+
+    fea_lm_HOG = []
+    for lll, hhh in zip(fea_lm, fea_HOG):
+        fea_lm_HOG.append(np.hstack((lll, hhh)))
+
+    accuracyList=[]
+    confList=[]
+
+    # find right C
+    C=np.arange(0.1,1.1,0.1) #C = np.logspace(-4, 1, 6)
+    for ccc in C:
+        score, confusion = trainSVM(fea_lm_HOG, labels,ccc)
+        accuracyList.append(score)
+        confList.append(confusion)
+
+    # draw chart
+    plt.plot(np.log10(C), accuracyList)
+    plt.show()
+
+    #calculate the average performance
+    accuracyList=[]
+    confList=[]
+
+    # find right C
+    C=np.arange(0.1,1.1,0.1) #C = np.logspace(-4, 1, 6)
+    for ccc in C:
+        score, confusion = trainSVM(fea_lm_HOG, labels,C=0.4)
+        accuracyList.append(score)
+        confList.append(confusion)
+
+    avrageAccuracy = np.mean(accuracyList)
+    averageConf = np.mean(confList,axis=0)
